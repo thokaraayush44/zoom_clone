@@ -45,7 +45,6 @@ const Navbar = () => {
         <Show when="signed-in">
           <div className="flex items-center justify-center rounded-full border border-gray-700 bg-dark-2 p-1">
             <UserButton
-              afterSignOutUrl="/"
               appearance={{
                 elements: {
                   avatarBox: "h-10 w-10",

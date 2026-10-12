@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Loader from '@/components/ui/Loader';
+import { cn } from '@/lib/utils';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -50,12 +51,10 @@ const MeetingRoom = () => {
         <div className="flex size-full max-w-[1000px] items-center">
           <CallLayout />
         </div>
-
         <div
-          className={`h-[calc(100vh-86px)] hidden ml-2 ${
-            showParticipants ? 'show-block' : ''
-          }`}
-        >
+          className={cn('h-[calc(100vh-86px)] hidden ml-2 ', {
+            'show-block': showParticipants,
+          })}>
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
       </div>

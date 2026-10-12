@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 
 interface MeetingModalProps{
     isOpen: boolean;
-    onClose(): string;
+    onClose: () => void;
     title: string;
     className?: string;
     children?: ReactNode;

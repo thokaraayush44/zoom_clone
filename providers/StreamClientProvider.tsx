@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState, ReactNode } from "react";
 import { StreamVideo, StreamVideoClient } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
@@ -12,8 +13,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const { user, isLoaded } = useUser();
 
   useEffect(() => {
-    if (!isLoaded || !user) return;
-    if (!apiKey) throw new Error('Stream API key missing');
+    if (!isLoaded || !user || !apiKey) return;
 
     const client = StreamVideoClient.getOrCreateInstance({
       apiKey,
@@ -27,18 +27,32 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
 
     setVideoClient(client);
 
-    return () => {
-      client.disconnectUser();
-    };
+    // Don't disconnect the singleton client here.
+    // React Strict Mode can run effect cleanup during development.
   }, [user?.id, isLoaded]);
 
-  if (!videoClient) return <Loader />;
+  if (!isLoaded) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader className="size-8 animate-spin text-white" />
+      </div>
+    );
+  }
 
-  return (
-    <StreamVideo client={videoClient}>
-      {children}
-    </StreamVideo>
-  );
+  // Public pages can render without Stream authentication
+  if (!user) {
+    return <>{children}</>;
+  }
+
+  if (!videoClient) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader className="size-8 animate-spin text-white" />
+      </div>
+    );
+  }
+
+  return <StreamVideo client={videoClient}>{children}</StreamVideo>;
 };
 
 export default StreamVideoProvider;
